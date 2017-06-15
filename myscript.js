@@ -80,18 +80,18 @@ function start(){
 			for(var j=i+1; j<ballCount; j++){
 
 				var distance = Math.sqrt(
-											(balls[i].x - balls[j].x) * (balls[i].x - balls[j].x) +
-											(balls[i].y - balls[j].y) * (balls[i].y - balls[j].y)
-										);
+								(balls[i].x - balls[j].x) * (balls[i].x - balls[j].x) +
+								(balls[i].y - balls[j].y) * (balls[i].y - balls[j].y)
+							);
 
 				if(distance < (balls[i].radius + balls[j].radius) ){
 
 					var ax = (balls[i].vx * (balls[i].mass - balls[j].mass) + (2 * balls[j].mass * balls[j].vx)) / (balls[i].mass + balls[j].mass);
-                    var ay = (balls[i].vy * (balls[i].mass - balls[j].mass) + (2 * balls[j].mass * balls[j].vy)) / (balls[i].mass + balls[j].mass);
-                    balls[j].vx = (balls[j].vx * (balls[j].mass - balls[i].mass) + (2 * balls[i].mass * balls[i].vx)) / (balls[i].mass + balls[j].mass);
-                    balls[j].vy = (balls[j].vy * (balls[j].mass - balls[i].mass) + (2 * balls[i].mass * balls[i].vy)) / (balls[i].mass + balls[j].mass);
-                    balls[i].vx = ax;
-                    balls[i].vy = ay;
+					var ay = (balls[i].vy * (balls[i].mass - balls[j].mass) + (2 * balls[j].mass * balls[j].vy)) / (balls[i].mass + balls[j].mass);
+					balls[j].vx = (balls[j].vx * (balls[j].mass - balls[i].mass) + (2 * balls[i].mass * balls[i].vx)) / (balls[i].mass + balls[j].mass);
+					balls[j].vy = (balls[j].vy * (balls[j].mass - balls[i].mass) + (2 * balls[i].mass * balls[i].vy)) / (balls[i].mass + balls[j].mass);
+					balls[i].vx = ax;
+					balls[i].vy = ay;
 				}
 			}
 		}
