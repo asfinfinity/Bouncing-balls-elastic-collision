@@ -1,7 +1,15 @@
 function start(){
 
 	var canvas = document.getElementById('myCanvas');
+	canvas.width = window.innerWidth-118;
+	canvas.height = window.innerHeight-200;
 	var ctx = canvas.getContext('2d');
+	var ctxText = canvas.getContext('2d');
+
+	var centerX;
+	var centerY;
+	var side = 110;
+	var color = get_random_color();
 
 	function rand(min, max) {
     	return parseInt(Math.random() * (max-min+1), 10) + min;
@@ -19,9 +27,8 @@ function start(){
 	}
 
 	var balls = [];
-	var ballCount = getRandomInt(2,10);
-	document.getElementById('ballCountInfo').innerHTML = ballCount;
-	document.getElementById('box').innerHTML = ballCount;
+	var ballCount = getRandomInt(3,9);
+	
 	var startpointX = 100;
 	var startpointY = 50;
 
@@ -31,8 +38,8 @@ function start(){
 		balls.push({
 			x: startpointX,
 			y: startpointY,
-			vx: getRandomInt(7,8) * direction(),
-	  		vy: getRandomInt(7,8) * direction(),
+			vx: getRandomInt(5,6) * direction(),
+	  		vy: getRandomInt(5,6) * direction(),
 			radius: randValue,
 			mass : randValue,
 			color: get_random_color(),
@@ -57,25 +64,50 @@ function start(){
 	}
 	
 	function draw() {
-
+		side = 110;
 		ctx.clearRect(0,0, canvas.width, canvas.height);
+		centerX = canvas.width / 2;
+    	centerY = canvas.height / 2;
+
+    	ctx.strokeStyle = color;
+    	ctx.fillStyle = color;
+    	roundRect(ctx, centerX - side / 2, centerY - side / 2, side, side, 5, true);
+
+    	if(ballCount == 0){
+	    	ctx.fillStyle = 'white';
+	    	ctx.font = '30px arial';
+	    	ctx.textAlign="center";
+	    	ctx.fillText('Over', centerX, centerY+10);
+    	} 
+    	else {
+			ctx.fillStyle = 'white';
+    		ctx.font = '48px arial';
+    		ctx.fillText(ballCount, centerX-12, centerY+16);
+    	}
+    	
+    	var left_X = centerX - side / 2;
+    	var right_X = centerX + side / 2;
+
+    	var upper_Y = centerY - side / 2;
+    	var bottom_Y = centerY + side / 2;
+
 		for(var i=0; i<ballCount; i++){
 			
 			balls[i].draw();
 			balls[i].x += balls[i].vx;
 			balls[i].y += balls[i].vy;
 			
-			if (balls[i].y + balls[i].vy > canvas.height || balls[i].y + balls[i].vy < 0) {
+			if ( (balls[i].y + balls[i].vy + balls[i].radius) > canvas.height || (balls[i].y + balls[i].vy - balls[i].radius) < 0) {
 				balls[i].vy = -balls[i].vy;
 			}
-			if (balls[i].x + balls[i].vx > canvas.width || balls[i].x + balls[i].vx < 0) {
+			if ( (balls[i].x + balls[i].vx + balls[i].radius) > canvas.width || (balls[i].x + balls[i].vx - balls[i].radius) < 0) {
 				balls[i].vx = -balls[i].vx;
 			}
 		}
 
-		onBoxTouched();
+		onBoxTouched(left_X, right_X, upper_Y, bottom_Y);
 
-		//collision check
+		//collision check among balls
 		for(var i=0; i<ballCount; i++){
 			for(var j=i+1; j<ballCount; j++){
 
@@ -99,32 +131,72 @@ function start(){
 		raf = window.requestAnimationFrame(draw);
 	}
 
+	function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
 
-	function onBoxTouched(){
+		if (typeof stroke == 'undefined') {
+			stroke = true;
+		}
+		if (typeof radius === 'undefined') {
+			radius = 5;
+		}
+		if (typeof radius === 'number') {
+			radius = {tl: radius, tr: radius, br: radius, bl: radius};
+		} else {
+			var defaultRadius = {tl: 0, tr: 0, br: 0, bl: 0};
+			for (var side in defaultRadius) {
+				radius[side] = radius[side] || defaultRadius[side];
+			}
+		}
+
+		ctx.beginPath();
+		ctx.moveTo(x + radius.tl, y);
+		ctx.lineTo(x + width - radius.tr, y);
+		ctx.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
+		ctx.lineTo(x + width, y + height - radius.br);
+		ctx.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height);
+		ctx.lineTo(x + radius.bl, y + height);
+		ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
+		ctx.lineTo(x, y + radius.tl);
+		ctx.quadraticCurveTo(x, y, x + radius.tl, y);
+		ctx.closePath();
+		if (fill) {
+			ctx.fill();
+		}
+		if (stroke) {
+			ctx.stroke();
+		}
+	}
+
+	function colorSquare(newColor){
+		side = 125;
+		color = newColor;
+		centerX = canvas.width / 2;
+    	centerY = canvas.height / 2;
+
+    	ctx.strokeStyle = color;
+    	ctx.fillStyle = color;
+    	roundRect(ctx, centerX - side / 2, centerY - side / 2, side, side, 5, true);
+    	
+    	ctx.fillStyle = 'white';
+    	ctx.font = 'bold 48px sans-serif';
+    	ctx.fillText(ballCount, centerX-12, centerY+12);
+	}
+
+	function onBoxTouched(left_X, right_X, upper_Y, bottom_Y){
 
 		for(var i=0; i<ballCount; i++){
 
-			if ( balls[i].x + balls[i].radius > 600 && balls[i].x + balls[i].radius < 750 &&
-				 balls[i].y + balls[i].radius > 200 && balls[i].y + balls[i].radius < 350) {
+			if ( balls[i].x + balls[i].radius >= left_X && balls[i].x - balls[i].radius <= right_X &&
+				 balls[i].y + balls[i].radius >= upper_Y && balls[i].y - balls[i].radius <= bottom_Y) {
 
-				var ele = document.getElementById("box");
-				ele.style.backgroundColor = balls[i].color;
-
+				colorSquare(balls[i].color);				
 				balls.splice(i,1);
 				ballCount = ballCount - 1;
-				
-				if(ballCount == 0){
-					ele.style.fontSize = "x-large";
-					ele.innerHTML = "Over";
-				}
-				else{
-					ele.innerHTML = ballCount;
-				}
-				
-				document.getElementById('ballCountInfo').innerHTML=" "+ballCount;
 			}
 		}
 	}
 
-	window.requestAnimationFrame(draw);
+	window.requestAnimationFrame(draw);		
+
 }
+

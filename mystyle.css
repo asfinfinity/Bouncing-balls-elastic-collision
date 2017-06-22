@@ -1,34 +1,14 @@
-.container-fluid{
-	background-color: #F5F5F5;
-	height: 100vh;
+body{
+	overflow-x: hidden;
 }
 
 canvas{
-	border: 1px solid lightgrey;
-	border-radius: 4px;
-	margin-top: 20px;
-	background-color: #fff;
-}
 
-#box{
-	width: 150px;
-	height: 150px;
-	background-color: plum;
+	border: 1px solid black;
 	border-radius: 5px;
-	position: absolute;
-	top: 200px;
-	left: 600px;
-	font-size: 72px;
-	font-weight: bold;
-	color: white;
-	line-height: 150px;
-	text-align: center;
-}
+	background-color: #fff;
 
-#info{
-	float: left;
-	font-size: 24px;
-	color: #6D8390;
-	margin-top: 20px;
+	width: 98%!important;
+
 }
 
