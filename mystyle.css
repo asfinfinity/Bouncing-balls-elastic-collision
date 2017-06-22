@@ -1,0 +1,14 @@
+body{
+	overflow-x: hidden;
+}
+
+canvas{
+
+	border: 1px solid black;
+	border-radius: 5px;
+	background-color: #fff;
+
+	width: 98%!important;
+
+}
+
